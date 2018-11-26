@@ -3,6 +3,8 @@ package com.getlosthere.samodelkin
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_new_character.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.launch
 
 private const val CHARACTER_DATA_KEY = "CHARACTER_DATA_KEY"
 
@@ -22,13 +24,14 @@ class NewCharacterActivity : AppCompatActivity() {
 //            it.getSerializable(CHARACTER_DATA_KEY)
 //                    as CharacterGenerator.CharacterData
 //        } ?: CharacterGenerator.generate()
-
         characterData = savedInstanceState?.characterData ?:
                 CharacterGenerator.generate()
 
         generateButton.setOnClickListener {
-            characterData = CharacterGenerator.generate()
-            displayCharacterData()
+            launch(UI) {
+                characterData = fetchCharacterData().await()
+                displayCharacterData()
+            }
         }
 
        displayCharacterData()
